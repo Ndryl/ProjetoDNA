@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "../../context/AuthContext";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import LayoutWrapper from "./components/layoutWrapper"; // Novo componente Client
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <AuthProvider>
+          <SidebarProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </SidebarProvider>
+        </AuthProvider>
       </body>
     </html>
   );
