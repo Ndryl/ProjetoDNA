@@ -48,21 +48,14 @@ export default function Logado() {
   };
 
   return (
-    <div className="grid grid-cols-5 grid-rows-6 rounded-md overflow-hidden h-screen gap-2 p-2">
-      <div className="col-span-1 row-span-3  rounded-2xl overflow-hidden">
-        <img
-          src="/HomeImage.png"
-          alt="Home"
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className="col-start-3 col-end-3 row-start-2 row-end-6  rounded-2xl overflow-hidden">
+    <div className="grid grid-cols-5 grid-rows-6 rounded-md overflow-hidden h-screen gap-2 p-2 w-full">
+      <div className="col-start-5 col-end-5 row-start-1 row-end-5  rounded-2xl overflow-hidden h-full">
         <GrathText />
       </div>
-      <div className="col-start-4 col-end-6 row-start-2 row-end-7  rounded-2xl overflow-hidden">
+      <div className="col-start-1 col-end-3 row-start-2 row-end-7  rounded-2xl overflow-hidden">
         <ColumnGroupingTable />
       </div>
-      <div className="col-start-1 col-end-3 row-start-4 row-end-7   rounded-2xl overflow-hidden">
+      <div className="col-start-3 col-end-5 row-start-2 row-end-5   rounded-2xl overflow-hidden">
         <GraphBar />
       </div>
       {renderCells()}
