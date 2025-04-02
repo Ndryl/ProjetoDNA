@@ -2,7 +2,6 @@
 import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/AppSidebar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function LayoutWrapper({
   children,
@@ -22,7 +21,6 @@ export default function LayoutWrapper({
         <SidebarProvider>
           <AppSidebar />
           <main className="w-full flex flex-1">
-            <SidebarTrigger />
             {children}
           </main>
         </SidebarProvider>
