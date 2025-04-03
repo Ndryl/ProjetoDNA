@@ -10,7 +10,7 @@ export default function SearchInventario() {
       className={`relative p-2 rounded-full transition-all duration-200 ${
         isFocused
           ? "bg-gradient-to-r from-purple-500/10 to-purple-500/20 ring-2 ring-purple-500"
-          : "border border-zinc-600 hover:bg-zinc-200 hover:border-purple-600"
+          : "border  border-zinc-600 hover:bg-zinc-200 hover:border-purple-600"
       }`}
     >
       <div className="flex gap-2 items-center bg-white rounded-full pl-3 pr-4 py-2">
