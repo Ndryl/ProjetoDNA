@@ -5,15 +5,6 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import Cookies from "js-cookie";
 import { Calendar, Home, Inbox, LogOut, Menu, Search } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { auth } from "@/Services/firebaseConfig";
 
 export function AppSidebar() {
@@ -40,58 +31,46 @@ export function AppSidebar() {
 
   return (
     <div
-      className={`bg-gray-200 min-h-screen transition-all duration-300 ${
-        isOpen ? "w-64 px-4 border-r" : "w-16 px-2"
+      className={`bg-[#FFFFFF] min-h-screen transition-all duration-300 overflow-hidden border-r ${
+        isOpen ? "w-64 px-4" : "w-16 px-2 max-w-[4rem]"
       }`}
     >
-      <Sidebar className={`h-full ${!isOpen && "border-none"}`}>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {/* Botão de alternância - Sempre visível dentro da sidebar */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => setIsOpen(!isOpen)}>
-                    <Menu />
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Itens do menu */}
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url} className="flex items-center gap-2">
-                        <item.icon />
-                        <span
-                          className={`transition-opacity duration-300 ${
-                            isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
-                          } overflow-hidden whitespace-nowrap`}
-                        >
-                          {item.title}
-                        </span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-
-                {/* Botão de Logout */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={handleLogout}>
-                    <LogOut />
-                    <span
-                      className={`transition-opacity duration-300 ${
-                        isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
-                      } overflow-hidden whitespace-nowrap`}
-                    >
-                      Sair
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
+      <div className="h-full flex flex-col">
+        <button onClick={() => setIsOpen(!isOpen)} className="p-2">
+          <Menu />
+        </button>
+        <nav className="flex flex-col gap-2 mt-4">
+          {items.map((item) => (
+            <a
+              key={item.title}
+              href={item.url}
+              className="flex items-center gap-2 p-2"
+            >
+              <item.icon />
+              <span
+                className={`transition-opacity duration-300 overflow-hidden whitespace-nowrap ${
+                  isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                }`}
+              >
+                {item.title}
+              </span>
+            </a>
+          ))}
+        </nav>
+        <button
+          onClick={handleLogout}
+          className="p-2 mt-auto flex items-center gap-2"
+        >
+          <LogOut />
+          <span
+            className={`transition-opacity duration-300 overflow-hidden whitespace-nowrap ${
+              isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+            }`}
+          >
+            Sair
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
