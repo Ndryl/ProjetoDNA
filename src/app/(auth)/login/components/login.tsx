@@ -1,4 +1,5 @@
 "use client";
+
 import Button from "@/app/components/button";
 import Google from "@/app/icons/icons";
 import { auth } from "@/Services/firebaseConfig";
@@ -10,7 +11,6 @@ import {
 } from "react-firebase-hooks/auth";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
-import jwt from "jsonwebtoken";
 import "react-toastify/dist/ReactToastify.css";
 
 interface LoginProps {
@@ -18,46 +18,49 @@ interface LoginProps {
 }
 
 export default function Login({ className }: LoginProps) {
-  const [email, setEmail] = useState<string>("");
-  const [senha, setSenha] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
   const router = useRouter();
   const [validatingToken, setValidatingToken] = useState(true);
 
+  // Verifica se já há um token salvo no cookie e mantém a sessão ativa
   useEffect(() => {
-    const token = Cookies.get("authToken");
-    if (token) {
-      try {
-        const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET || "seu-segredo";
-        jwt.verify(token, secretKey);
-        router.push("/Home");
-      } catch (error) {
-        Cookies.remove("authToken");
-      }
-    }
-    setValidatingToken(false);
+    const isLogged = async () => {
+      auth.onIdTokenChanged(async (user) => {
+        if (user) {
+          const token = await user.getIdToken();
+          Cookies.set("digitaliza-auth", token, { expires: 30 });
+          router.push("/Home");
+        } else {
+          Cookies.remove("digitaliza-auth");
+        }
+      });
+      setValidatingToken(false);
+    };
+
+    isLogged();
   }, [router]);
 
-  const generateToken = (userEmail: string) => {
-    const secretKey = process.env.NEXT_PUBLIC_JWT_SECRET || "seu-segredo";
-    return jwt.sign({ email: userEmail }, secretKey, { expiresIn: "30d" });
-  };
-
-  const handleAuthSuccess = (userEmail: string) => {
+  // Salva o token no cookie após login bem-sucedido
+  const handleAuthSuccess = async (userEmail: string) => {
     toast.success("Login realizado com sucesso!", {
       autoClose: 3000,
       position: "bottom-center",
     });
 
-    if (rememberMe) {
-      const token = generateToken(userEmail);
-      Cookies.set("authToken", token, { expires: 30 });
+    const user = auth.currentUser;
+    if (user) {
+      const token = await user.getIdToken();
+      Cookies.set("digitaliza-auth", token, { expires: 30 });
     }
 
     router.push("/Home");
   };
 
+  // Login com email e senha
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -74,7 +77,7 @@ export default function Login({ className }: LoginProps) {
       if (!result) {
         throw new Error("Dados incorretos");
       }
-      handleAuthSuccess(email);
+      await handleAuthSuccess(email);
     } catch (error) {
       toast.error(
         "Erro ao fazer login. Verifique seus dados e tente novamente.",
@@ -86,6 +89,23 @@ export default function Login({ className }: LoginProps) {
     }
   };
 
+  // Login com Google
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      if (!result) {
+        throw new Error("Erro ao autenticar com Google");
+      }
+      await handleAuthSuccess(result.user.email!);
+    } catch (error) {
+      toast.error("Erro ao autenticar com Google.", {
+        autoClose: 5000,
+        position: "bottom-center",
+      });
+    }
+  };
+
+  // Redireciona para a página de registro
   const handleRegister = () => {
     router.push("/registro");
   };
@@ -98,7 +118,7 @@ export default function Login({ className }: LoginProps) {
     <div className="flex flex-col justify-center items-center min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className={`flex flex-col items-center gap-6 ${className ?? ""} `}
+        className={`flex flex-col items-center gap-6 ${className ?? ""} bg-white p-8 rounded-lg border`}
       >
         <div className="flex flex-col gap-1 ">
           <span className="text-xl font-extrabold text-zinc-800">
@@ -108,6 +128,7 @@ export default function Login({ className }: LoginProps) {
             Insira seus dados:
           </span>
         </div>
+
         <div className="flex flex-col justify-center items-center gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm">Email:</label>
@@ -140,12 +161,22 @@ export default function Login({ className }: LoginProps) {
             <span className="text-xs text-black">Lembre por 30 dias</span>
           </div>
         </div>
+
         <div className="flex flex-col gap-3">
           <button
             type="submit"
             className="bg-blue-700 hover:bg-blue-500 p-2 min-w-[300px] text-white rounded-md shadow-xl"
           >
             Entrar
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center gap-2 border border-zinc-400 p-2 min-w-[300px] text-black rounded-md shadow-md hover:bg-zinc-200"
+          >
+            <Google />
+            <span>Entrar com Google</span>
           </button>
         </div>
 

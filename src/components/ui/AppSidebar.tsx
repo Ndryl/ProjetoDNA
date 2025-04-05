@@ -8,7 +8,7 @@ import { Calendar, Home, Inbox, LogOut, Menu, Search } from "lucide-react";
 import { auth } from "@/Services/firebaseConfig";
 
 export function AppSidebar() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // Inicia FECHADA
   const router = useRouter();
 
   const handleLogout = async () => {

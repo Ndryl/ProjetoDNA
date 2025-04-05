@@ -10,6 +10,9 @@ import {
   PackageOpen,
   PackageX,
 } from "lucide-react";
+import { auth } from "@/Services/firebaseConfig";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const arrayTitle = [
   "Produtos Em Uso",
@@ -27,6 +30,8 @@ const valor = ["1250", "300", "150", "50"];
 
 export default function Logado() {
   // Cria as células dinamicamente (agora 4 cards)
+
+  const router = useRouter()
   const renderCells = () => {
     const cells = [];
     for (let i = 0; i < 4; i++) {
@@ -46,6 +51,8 @@ export default function Logado() {
     }
     return cells;
   };
+
+
 
   return (
     <div className="grid grid-cols-5 grid-rows-6 rounded-md overflow-hidden h-screen gap-2 p-2 w-full">

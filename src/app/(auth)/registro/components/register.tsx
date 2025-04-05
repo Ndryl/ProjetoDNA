@@ -1,7 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify"; // Importe o toast
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import db, { auth } from "@/Services/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
@@ -16,7 +16,7 @@ export default function Register({ className }: RegisterProps) {
   const [repSenha, setRepSenha] = useState<string>("");
   const [nome, setNome] = useState<string>("");
   const router = useRouter();
-  const [createUserWithEmailAndPassword, user, loading, error] =
+  const [createUserWithEmailAndPassword, userCredential, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +32,7 @@ export default function Register({ className }: RegisterProps) {
       // Cria o usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(email, senha);
 
-      if (userCredential) {
+      if (userCredential?.user) {
         const user = userCredential.user;
 
         // Salva informações adicionais no Firestore
@@ -59,13 +59,12 @@ export default function Register({ className }: RegisterProps) {
   };
 
   const handleCancel = () => {
-    router.push("/login"); // Redireciona para a página /login
+    router.push("/login");
   };
-  if (loading) {
-    return <p>Carregando...</p>;
-  }
+
   return (
     <>
+      {loading ? <p>Carregando...</p> : null}
       <form
         onSubmit={handleSubmit}
         className={`flex flex-col items-center gap-6 ${className ?? ""}`}
@@ -125,12 +124,13 @@ export default function Register({ className }: RegisterProps) {
           <button
             type="submit"
             className="bg-blue-700 hover:bg-blue-500 p-2  text-white rounded-md shadow-xl"
+            disabled={loading}
           >
-            Registrar
+            {loading ? "Carregando..." : "Registrar"}
           </button>
           <button
             type="button"
-            className="bg-gray-300 hover:bg-gray-200 hover:border-solid hover:border-black p-2  text-black rounded-md shadow-xl"
+            className="bg-gray-300 hover:bg-gray-200 hover:border-solid hover:border-black p-2 text-black rounded-md shadow-xl"
             onClick={handleCancel}
           >
             Cancelar
