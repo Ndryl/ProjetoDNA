@@ -130,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setLoading(false);
 
-        
+        //testando
       });
     } catch (e) {
       console.error("Auth state change error:", e);
